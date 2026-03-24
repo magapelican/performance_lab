@@ -6,35 +6,75 @@ import java.lang.Integer;
 
 public class Main {
     public static void main(String[] args) {
-        StringBuilder path1 = new StringBuilder();
-        StringBuilder path2 = new StringBuilder();
-
-        int n = Integer.parseInt(args[0]);
-        int m = Integer.parseInt(args[1]);
-    
-        ListProcessor listProcessor1 = new ListProcessor(n, m, path1);
-        
-        n = Integer.parseInt(args[2]);
-        m = Integer.parseInt(args[3]);
-
-
-        ListProcessor listProcessor2 = new ListProcessor(n, m, path2);
-
-
-        Thread thread1 = new Thread(listProcessor1);
-        Thread thread2 = new Thread(listProcessor2);
-
-        thread1.start();
-        thread2.start();
-
-        try {
-            thread1.join();
-            thread2.join();
-        } 
-        catch(Exception e) {
-            System.out.println(e);
+        if (args.length != 4) {
+            System.out.println("Аргументов должно быть 4!");
+            System.exit(1);
         }
 
-        System.out.println(path1.toString() + path2.toString());    
+        int n = parse(args[0]);
+        int m = parse(args[1]);
+
+        typeArray(n, m, 1);
+        String path1 = getPath(n, m);
+
+        n = parse(args[2]);
+        m = parse(args[3]);
+
+        typeArray(n, m, 2);
+        String path2 = getPath(n, m);
+
+        System.out.printf("Общий путь: %s", path1 + path2);
+        
     }
+
+    private static int parse(String value) {
+        int i = 0;
+        
+        try {
+            i = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            System.out.println("Аргумент должен быть int!");
+            System.exit(1);
+        }
+
+        return i;
+    }
+
+    private static void typeArray(int n, int m, int arrayNumber) {
+        System.out.printf("Массив %d: n = %d, m = %d\n", arrayNumber, n, m);
+        System.out.print("Круговой массив: ");
+        for (int i = 1; i <= n; i++) {
+            System.out.print(i);
+        }
+        System.out.println();
+    }
+
+    private static String getPath(int n, int m) {
+        int i = 1;
+        int step = 0;
+        StringBuilder str = new StringBuilder();
+
+        str.append(i);
+
+        System.out.print("Интервалы: ");
+
+        while (true) {
+            System.out.print(i);
+            if (step++ == m - 1) {
+                if (i == 1) break;
+                System.out.print(", ");
+                step = 0;
+                str.append(i);
+                continue;
+            }
+
+            i = (i + 1) % (n + 1) == 0 ? 1 : i + 1;
+        }
+
+        String path = str.toString();
+        System.out.printf(". Полученный путь: %s\n", path);
+
+        return path;
+    }
+
 }

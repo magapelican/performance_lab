@@ -1,5 +1,3 @@
-package org.example;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -8,9 +6,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
     public static void main(String[] args) {
+
+        if (args.length != 3) {
+            System.out.println("Должно быть передано три аргумента(пути к файлам)!");
+            System.exit(1);
+        }
+
+        if (!Files.exists(Paths.get(args[0])) || !Files.exists(Paths.get(args[1])) || !Files.exists(Paths.get(args[2]))) {
+            System.out.println("Неправильный путь к файлу!");
+            System.exit(1);
+        }
 
         ObjectMapper objectMapper = new ObjectMapper();
 

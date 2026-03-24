@@ -7,9 +7,21 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.Integer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
     public static void main(String[] args) {
+
+        if (args.length != 1) {
+            System.out.println("Должно быть передан один аргумент(путь к файлу)!");
+            System.exit(1);
+        }
+
+        if (!Files.exists(Paths.get(args[0]))) {
+            System.out.println("Неправильный путь к файлу!");
+            System.exit(1);
+        }
 
         try {
             List<Integer> nums = createList(args[0]);
@@ -24,36 +36,33 @@ public class Main {
     private static List<Integer> createList(String path) throws FileNotFoundException, IOException{
         BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
 
-        String line = bufferedReader.readLine();
         List<Integer> nums = new ArrayList<>();
-        String[] stringNumbers = line.split(",");
 
-        for (String strNumber : stringNumbers) {
-            strNumber = strNumber.trim();
-            if (!strNumber.isEmpty()) nums.add(Integer.parseInt(strNumber));
+        String line;
+        while((line = bufferedReader.readLine()) != null) {
+            line = line.trim();
+            if (!line.isEmpty()) {
+                nums.add(Integer.parseInt(line));
+            }
         }
-
         return nums;
     }
 
     private static void processList(List<Integer> nums) {
-        int summ = 0;
-        for (Integer i : nums) summ += i;
+        nums.sort(null);
 
-        int mean = summ / nums.size();
+        int median = nums.get(nums.size() / 2);
         int moves = 0;
 
         for (Integer i : nums) {
-            if (moves > 20) {
-                System.out.println("20 ходов недостаточно для приведения всез элементов массива к одному числу");
-                return;
-            }
-
-            if (i > mean) moves += i - mean;
-            else moves += mean - i;
+            moves += Math.abs(i - median);
         }
 
-        System.out.println("Количество ходов: " + moves);
-
+        if (moves > 20) {
+            System.out.println("20 ходов недостаточно для приведения всех элементов массива к одному числу");
+        }
+        else {
+            System.out.println("Количество ходов: " + moves);
+        }
     }
 }
